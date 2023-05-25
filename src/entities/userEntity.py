@@ -3,8 +3,8 @@ from collections import namedtuple
  
 class userEntity:
 
-    def __init__(self,codigo=None,user_nickname=None,user_password=None,user_name=None,user_lastname=None,user_edad=None,user_genero=None,user_pais=None,user_mail=None):
-        self.codigo = codigo
+    def __init__(self,user_dni=None,user_nickname=None,user_password=None,user_name=None,user_lastname=None,user_edad=None,user_genero=None,user_pais=None,user_mail=None):
+        self.user_dni = user_dni
         self.user_nickname = user_nickname
         self.user_password = user_password
         self.user_name = user_name
@@ -21,7 +21,7 @@ class userEntity:
         data = request.get_json() 
         data = json.dumps(data)
         values = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
-        self.codigo = values.codigo
+        self.user_dni = values.user_dni
         self.user_nickname = values.user_nickname
         self.user_password = values.user_password
         self.user_name = values.user_name

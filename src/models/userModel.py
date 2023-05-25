@@ -16,7 +16,7 @@ class userModel(dbModel):
             print('Se conecto a la bd')
             _con_client = _db.get_client()
 
-            _sql = """SELECT u.codigo, 
+            _sql = """SELECT u.user_dni, 
                     u.user_nickname,
                     u.user_password,
                     u.user_name,
@@ -33,7 +33,7 @@ class userModel(dbModel):
         
             for row in _rows:
                 _entity  = userEntity()
-                _entity.codigo = row[0]
+                _entity.user_dni = row[0]
                 _entity.user_nickname = row[1]
                 _entity.user_password = row[2]
                 _entity.user_name = row[3]
@@ -65,11 +65,11 @@ class userModel(dbModel):
             print('Se conecto a la bd')
             _con_client = _db.get_client()
 
-            _sql = """insert into main.user_app(codigo, user_nickname, user_password, user_name, user_lastname, user_edad, user_genero, user_pais, user_mail)
+            _sql = """insert into main.user_app(user_dni, user_nickname, user_password, user_name, user_lastname, user_edad, user_genero, user_pais, user_mail)
                     values(%s,%s,%s,%s,%s,%s,%s,%s,%s); """   
 
             _cur = _con_client.cursor()
-            _cur.execute(_sql,(entity.codigo,entity.user_nickname,entity.user_password,entity.user_name,entity.user_lastname,entity.user_edad,entity.user_genero,entity.user_pais,entity.user_mail))
+            _cur.execute(_sql,(entity.user_dni,entity.user_nickname,entity.user_password,entity.user_name,entity.user_lastname,entity.user_edad,entity.user_genero,entity.user_pais,entity.user_mail))
             _con_client.commit()
             _cur.close()
         except(Exception) as e:
@@ -103,10 +103,10 @@ class userModel(dbModel):
                     user_pais = %s,
                     user_mail = %s
                     
-                    where codigo = %s;"""   
+                    where user_dni = %s;"""   
 
             _cur = _con_client.cursor()
-            _cur.execute(_sql,(entity.user_nickname,entity.user_password,entity.user_name,entity.user_lastname,entity.user_edad,entity.user_genero,entity.user_pais,entity.user_mail,entity.codigo))
+            _cur.execute(_sql,(entity.user_nickname,entity.user_password,entity.user_name,entity.user_lastname,entity.user_edad,entity.user_genero,entity.user_pais,entity.user_mail,entity.user_dni))
             _con_client.commit()
             _cur.close()
         except(Exception) as e:
@@ -121,7 +121,7 @@ class userModel(dbModel):
 
 
 
-    def delete_users(self,codigo):
+    def delete_users(self,user_dni):
         _db = None
         try:
             _db = Database()
@@ -130,10 +130,10 @@ class userModel(dbModel):
             _con_client = _db.get_client()
 
             _sql = """DELETE FROM main.user_app
-                    WHERE codigo = %s;"""   
+                    WHERE user_dni = %s;"""   
 
             _cur = _con_client.cursor()
-            _cur.execute(_sql,(codigo,))
+            _cur.execute(_sql,(user_dni,))
             _con_client.commit()
             _cur.close()
         except(Exception) as e:
@@ -143,12 +143,12 @@ class userModel(dbModel):
             if _db is not None:
                 _db.disconnect()
                 print("Se cerro la conexion")
-        return codigo
+        return user_dni
 
 
         
     
-    def get_users_by_id(self,codigo):
+    def get_users_by_id(self,user_dni):
         _db = None
         _entity = None
         try:
@@ -159,10 +159,10 @@ class userModel(dbModel):
 
             _sql = """SELECT u.user_nickname,u.user_password,u.user_name,u.user_lastname,u.user_edad,u.user_genero,u.user_pais,u.user_mail
                         FROM    main.user_app u
-                        WHERE u.codigo = %s;"""   
+                        WHERE u.user_dni = %s;"""   
 
             _cur = _con_client.cursor()
-            _cur.execute(_sql,(codigo,))
+            _cur.execute(_sql,(user_dni,))
             _rows = _cur.fetchall()
 
             if(len(_rows) >= 0):
@@ -175,7 +175,7 @@ class userModel(dbModel):
                 _entity.user_genero = _rows[0][5]
                 _entity.user_pais = _rows[0][6]
                 _entity.user_mail = _rows[0][7]
-                _entity.codigo = _rows[0][8]
+                _entity.user_dni = _rows[0][8]
 
             _cur.close()
         except(Exception) as e:

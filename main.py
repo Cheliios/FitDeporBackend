@@ -56,6 +56,7 @@ def get_users_by_id(index):
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
+    user_dni = request.form.get('user_dni')
     user_nickname = request.form.get('user_nickname')
     user_password = request.form.get('user_password')
     user_name = request.form.get('user_name')
@@ -68,7 +69,7 @@ def register():
     # Verificar si el nickname ya está registrado en la base de datos
     db.connect(host='35.225.144.32', port=5432, user='certus_joche', password='joche123', database='certus_db')
     db.set_cursor()
-    db.get_cursor().execute("SELECT * FROM main.user_app WHERE user_nickname = %s", (user_nickname,))
+    db.get_cursor().execute("SELECT * FROM main.user_app WHERE user_dni = %s", (user_dni,))
     result = db.get_cursor().fetchone()
 
     if result is not None:
@@ -76,8 +77,8 @@ def register():
         return 'El nickname ya está registrado' 
 
     # Insertar el nuevo usuario en la base de datos
-    db.get_cursor().execute("INSERT INTO main.user_app (user_nickname, user_password, user_name, user_lastname, user_edad, user_genero, user_pais, user_mail) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                            (user_nickname, user_password, user_name, user_lastname, user_edad, user_genero, user_pais, user_mail))
+    db.get_cursor().execute("INSERT INTO main.user_app (user_dni, user_nickname, user_password, user_name, user_lastname, user_edad, user_genero, user_pais, user_mail) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                            (user_dni, user_nickname, user_password, user_name, user_lastname, user_edad, user_genero, user_pais, user_mail))
     db.get_client().commit()
     db.disconnect()
 
@@ -87,13 +88,13 @@ def register():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    user_nickname = request.form.get('user_nickname')
+    user_nickname = request.form.get('user_mail')
     user_password = request.form.get('user_password')
 
     # Verificar si los datos coinciden en la base de datos
     db.connect(host='35.225.144.32', port=5432, user='certus_joche', password='joche123', database='certus_db')
     db.set_cursor()
-    db.get_cursor().execute("SELECT * FROM main.user_app WHERE user_nickname = %s AND user_password = %s", (user_nickname, user_password))
+    db.get_cursor().execute("SELECT * FROM main.user_app WHERE user_mail = %s AND user_password = %s", (user_mail, user_password))
     result = db.get_cursor().fetchone()
     db.disconnect()
 

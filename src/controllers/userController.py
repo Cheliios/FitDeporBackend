@@ -55,7 +55,7 @@ class userController(responseController):
             print('error: '+ str(e))
         return responseEntity(_status,_message,_data).toJSON()
 
-    
+
     def delete_users(self,index):
         _message = None
         _status = self.interruption
