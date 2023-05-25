@@ -88,7 +88,7 @@ def register():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    user_nickname = request.form.get('user_mail')
+    user_mail = request.form.get('user_mail')  # Corregir el nombre de la variable
     user_password = request.form.get('user_password')
 
     # Verificar si los datos coinciden en la base de datos
@@ -102,10 +102,7 @@ def login():
         return 'Usuario no encontrado o contraseña incorrecta'
 
     return 'OK'  # Login exitoso
-
-
-
-
+    
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
 
