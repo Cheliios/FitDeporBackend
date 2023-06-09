@@ -3,6 +3,8 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_claims
 )
+from flask import send_file
+from flask import redirect
 from src.controllers.userController import userController
 import os
 import hashlib
@@ -12,7 +14,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from psycopg2.pool import SimpleConnectionPool
 from src.cn.data_base_connection import Database
-
+import json
 
 app = Flask(__name__)
 app.secret_key = "any random string"
@@ -74,7 +76,8 @@ def register():
 
     if result is not None:
         db.disconnect()
-        return 'El nickname ya está registrado' 
+        error_response = {'error': 'El usuario ya está registrado'}
+        return json.dumps(error_response), 400
 
     # Insertar el nuevo usuario en la base de datos
     db.get_cursor().execute("INSERT INTO main.user_app (user_dni, user_nickname, user_password, user_name, user_lastname, user_edad, user_genero, user_pais, user_mail) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
@@ -103,6 +106,29 @@ def login():
 
     return 'OK'  # Login exitoso
     
+
+
+# Imagenes Backend
+
+
+
+@app.route('/images/<img_name>', methods=['GET'])
+def get_image(img_name):
+    # Realizar la consulta en la base de datos para obtener el nombre del archivo de imagen
+    db.connect(host='35.225.144.32', port=5432, user='certus_joche', password='joche123', database='certus_db')
+    db.set_cursor()
+    db.get_cursor().execute("SELECT img_link FROM main.img_fitdepor WHERE img_name = %s", (img_name,))
+    result = db.get_cursor().fetchone()
+    db.disconnect()
+
+    if result is None:
+        return 'Imagen no encontrada', 404
+
+    img_filename = result['img_link'].split('/')[-1]  # Obtener el nombre del archivo de imagen
+
+    # Redirigir al enlace público de la imagen en Google Cloud Storage
+    return redirect(f'https://storage.googleapis.com/fitsport-bucket/img-app/{img_filename}')
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
 
